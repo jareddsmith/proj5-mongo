@@ -156,7 +156,7 @@ def get_memos():
     records = [ ]
     for record in collection.find( { "type": "dated_memo" } ):
         record['date'] = arrow.get(record['date']).isoformat()
-        del record['_id']
+        record['_id'] = str(record['_id'])
         records.append(record)
 
     records.sort(key=lambda r: r["date"])
