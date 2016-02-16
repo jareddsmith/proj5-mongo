@@ -17,4 +17,4 @@ http://ix.cs.uoregon.edu/~jsmith/cis322/htbin/proj5-mongo
 
 http://ix.cs.uoregon.edu: (5001 - 8000)
 
-The port is randomly chosen with each excution.
+The port is randomly chosen with each execution.
