@@ -19,8 +19,6 @@
 
    <!-- Our own style sheet -->
    <link rel="stylesheet" href="/static/css/memos.css" />
-
-
 </head>
 <body>
 <div class="container">
@@ -36,27 +34,36 @@
   {% endif %}
 {% endwith %}
 
+<p>
 <h1>Memos</h1>
+<form action="/create">
+    <input type="submit" value="Create a new Memo">
+</form>
+</p>
 
 {% if session.memos %}
     {% for memo in session.memos %}
+  <form method="GET" action="_delete">
   <div class="memo">
   <div class="row">
   <div class="col-md-2">
     {{ memo.date | humanize }}
   </div>
-  <div class="col-md-10">
+  <div class="col-md-8">
     {{ memo.text }}
+  </div>
+  <div class="col-md-2">
+      <input type="hidden" name="memoID" value="{{memo._id}}"/>
+      <input type="submit" value="Delete?"/>
   </div>
   </div> <!-- row -->
   </div> <!-- memo -->
+  </form>
+  <hr>
   {% endfor %}
 {% else %}
   <p>No memos for you. </p>  
 {% endif %}
-
- 
-
 </div> <!-- container -->
 </body>
 </html>

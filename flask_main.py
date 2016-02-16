@@ -27,6 +27,7 @@ from dateutil import tz  # For interpreting local times
 
 # Mongo database
 from pymongo import MongoClient
+from bson import ObjectId
 
 
 ###
@@ -36,6 +37,7 @@ import CONFIG
 
 app = flask.Flask(__name__)
 
+print("Entering Setup")
 try: 
     dbclient = MongoClient(CONFIG.MONGO_URL)
     db = dbclient.memos
@@ -56,17 +58,17 @@ app.secret_key = str(uuid.uuid4())
 @app.route("/index")
 def index():
   app.logger.debug("Main page entry")
+  app.logger.debug("Getting memos now")
   flask.session['memos'] = get_memos()
+  app.logger.debug("Displaying all memos")
   for memo in flask.session['memos']:
       app.logger.debug("Memo: " + str(memo))
   return flask.render_template('index.html')
 
-
-# We don't have an interface for creating memos yet
-# @app.route("/create")
-# def create():
-#     app.logger.debug("Create")
-#     return flask.render_template('create.html')
+@app.route("/create")
+def create():
+    app.logger.debug("Create")
+    return flask.render_template('create.html')
 
 
 @app.errorhandler(404)
@@ -112,6 +114,33 @@ def humanize_arrow_date( date ):
         human = date
     return human
 
+@app.route("/_create")
+def create_memo():
+    """
+    Creates and insert a new memo into the database.
+    """
+    date = request.args.get('date', 0, type=str)
+    memo = request.args.get('memo', 0, type=str)
+    
+    insert_memo(date,memo)
+    
+    return flask.redirect("/index")
+
+@app.route("/_delete")
+def delete_memo():
+    """
+    Deletes entry by ID
+    """
+    print("Getting memo id...")
+    memoID = request.args.get('memoID', 0, type=str)
+    print("The memo id is " + memoID)
+    print("Deleting memo...")
+
+    memo = collection.find_one({"_id": ObjectId(memoID)})
+    collection.remove(memo)
+    print("Deleted! Redirecting to index.")
+    
+    return flask.redirect("/index")
 
 #############
 #
@@ -123,13 +152,33 @@ def get_memos():
     Returns all memos in the database, in a form that
     can be inserted directly in the 'session' object.
     """
+    print("get_memos() started")
     records = [ ]
     for record in collection.find( { "type": "dated_memo" } ):
         record['date'] = arrow.get(record['date']).isoformat()
         del record['_id']
         records.append(record)
-    return records 
 
+    records.sort(key=lambda r: r["date"])
+    return records
+
+def insert_memo(date, memo):
+    """
+    """
+    print("Inserting memo")
+    print("********** The date is " + str(date))
+    dt = arrow.get(date, 'MM/DD/YYYY').replace(tzinfo='local')
+    iso_dt = dt.isoformat()
+    print("Compiling record from data")
+    record = {
+                "type": "dated_memo",
+                "date": iso_dt,
+                "text": memo
+                }
+    collection.insert(record)
+    print("Memo has been inserted into the database")
+
+    return
 
 if __name__ == "__main__":
     # App is created above so that it will

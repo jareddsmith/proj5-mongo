@@ -15,11 +15,15 @@
    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
    <script
     src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
-</script>
+   </script>
+   
+   <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+       <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+       <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
 
    <!-- Our own style sheet -->
    <link rel="stylesheet" href="/static/css/memos.css" />
-
 
 </head>
 <body>
@@ -37,17 +41,42 @@
   {% endif %}
 {% endwith %}
 
-<form method="PUT" action="_create">
+<script>
+    $(function(){
+      
+        $('#datepicker').datepicker({
+            onSelect: function(dateText, inst) {
+                $("input[name='date']").val(dateText);
+            }
+        });
+      
+      });
+</script>
+
+<form method="GET" action="_create">
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-2"> Date:
     <input type="text" class="form-control"
-     name="Date" value=""/>
+     id="datepicker"/>
   </div>
-  <div class="col-md-10">
-    <input type="text" class="form-control"
-      name="Memo" value="Memo" />
-  </div>
- </div>
+</div>
+<input type="hidden" name="date"
+    value="" />
+
+<br>
+Memo:
+<br>
+<textarea style="resize:none" name="memo" cols=40 rows=6>
+</textarea>
+
+<br><br>
+
+<p>
+<input type="submit"></input>
+<input type="button" onclick="document.location='/index'" value="Cancel"/>
+</p>
+
+
 </form>
 </div> 
 </body>
