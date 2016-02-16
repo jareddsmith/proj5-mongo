@@ -12,8 +12,9 @@ A simple Flask app that displays all the dated memos it finds in a MongoDB datab
 ## Status
 
 Fully operational
+
 http://ix.cs.uoregon.edu/~jsmith/cis322/htbin/proj5-mongo
 
-http://ix.cs.uoregon.edu:(5001 - 8000)
+http://ix.cs.uoregon.edu: (5001 - 8000)
 
 The port is randomly chosen with each excution.
